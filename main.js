@@ -5,12 +5,33 @@ var BUTTON_COLOR_START = "green"
 var BUTTON_COLOR_WAIT  = "magenta"
 var BUTTON_COLOR_STOP  = "red"
 
-function exit() {
+function exit(close) {
     if(isScan){
+        messageError.text = "Для закрытия программы остановите сканирование"
         messageError.open();
+        close.accepted = false;
         return;
     }
-    Qt.quit();
+    save();
+}
+
+function save(){
+    if(file.clientsWrite(JSON.stringify(clients))){
+        messageInformation.text = "Информация успешно сохранена"
+        messageInformation.open();
+    } else {
+        messageError.text = "Ошибка сохранения информации"
+        messageError.open();
+    }
+}
+
+function completed(Screen, height, width){
+    setX(Screen.width / 2 - width / 2);
+    setY(Screen.height / 2 - height / 2);
+
+    var data = file.clientsRead();
+    clients = data ? JSON.parse(data) : [];
+    tTotal = clients.length;
 }
 
 function menuClientAdd(){
@@ -27,7 +48,6 @@ function menuClientEdit(){
         clientEdit = Qt.createComponent("ClientEdit.qml").createObject(this);
     }
 
-    console.log("@@@", JSON.stringify(clients));
     clientEdit.clients = clients;
     clientEdit.show();
 }

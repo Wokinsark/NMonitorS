@@ -65,7 +65,7 @@ Window {
         TextField{
             id: tfTelephone
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.fillHeight: true            
             implicitWidth: parent.width / 2
         }
         Button{
@@ -97,11 +97,13 @@ Window {
 
     function restart(){
         if(visible){
+            width  = 300
+            height = 130
             setX(Screen.width / 2 - width / 2);
             setY(Screen.height / 2 - height / 2);
-            tfLastName.text = "";
-            tfName.text = "";
-            tfTelephone.text = "";
+            tfLastName.text  = "";
+            tfName.text      = "";
+            tfTelephone.text = "+380";
             tfLastName.forceActiveFocus();
         }
     }

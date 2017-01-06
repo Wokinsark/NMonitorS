@@ -7,7 +7,6 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import wifi.tplink 1.0
 import io 1.0
-
 import "main.js" as Main
 
 ApplicationWindow {
@@ -49,6 +48,11 @@ ApplicationWindow {
         Menu {            
             title: "Программа"
             MenuItem {
+                text: "Сохранить всё"
+                shortcut: "Ctrl+S"
+                onTriggered: Main.save()
+            }
+            MenuItem {
                 text: "Выход"
                 shortcut: "Esc"
                 onTriggered: close();
@@ -76,6 +80,7 @@ ApplicationWindow {
         anchors.fill: parent
         RowLayout{
             id: rl
+            anchors.margins: 5
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
@@ -83,7 +88,7 @@ ApplicationWindow {
                 id : gbTotal
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.right: gbProgress.left
+                anchors.right: gbProgress.left                
                 anchors.bottom: parent.bottom
                 Layout.fillWidth: true
                 GridLayout{
@@ -167,7 +172,7 @@ ApplicationWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: rl.bottom
-            anchors.bottom: parent.bottom
+            anchors.bottom: parent.bottom            
             columns: 2
             rows: 2
 
@@ -339,21 +344,22 @@ ApplicationWindow {
         onTriggered: Main.timerTriggered()
     }
 
-    onClosing: {
-        close.accepted = false;
-        Main.exit();
-    }
-
-    Component.onCompleted: {
-        setX(Screen.width / 2 - width / 2);
-        setY(Screen.height / 2 - height / 2);
-    }
+    onClosing: Main.exit(close)
+    Component.onCompleted: Main.completed(Screen, height, width)
 
     MessageDialog {
         id: messageError
         standardButtons : StandardButton.Ok
         icon : StandardIcon.Warning
         title: "Внимание"
-        text: "Для закрытия программы остановите сканирование"
+        text: "Важная информация"
+    }
+
+    MessageDialog {
+        id: messageInformation
+        standardButtons : StandardButton.Ok
+        icon : StandardIcon.Information
+        title: "Информация"
+        text: "Просто информация"
     }
 }

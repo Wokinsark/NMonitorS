@@ -4,5 +4,7 @@
         <file>main.js</file>
         <file>ClientAdd.qml</file>
         <file>ClientEdit.qml</file>
+        <file>clientedit.js</file>
+        <file>DeviceEdit.qml</file>
     </qresource>
 </RCC>

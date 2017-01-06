@@ -2,6 +2,8 @@ import QtQuick.Window 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
 import QtQuick 2.7
+import QtQuick.Dialogs 1.2
+import "clientedit.js" as ClientEdit
 
 Window {
     visible: false
@@ -10,7 +12,7 @@ Window {
     title: "Редактировать абонентов"
     modality : Qt.ApplicationModal
 
-    property var clients: null
+    property var clients: []
 
     Action{
         shortcut: "Esc"
@@ -19,14 +21,14 @@ Window {
 
     Action{
         shortcut: "Ctrl+S"
-        enabled: bAdd.enabled
-        onTriggered: close()
+        enabled: bSave.enabled
+        onTriggered: bSave.clicked()
     }
 
     Action{
         shortcut: "Delete"
         enabled: bRemove.enabled
-        onTriggered: close()
+        onTriggered: bRemove.clicked()
     }
 
     RowLayout{
@@ -35,7 +37,10 @@ Window {
             id: tbClients
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            implicitWidth: parent.width / 2
+            anchors.left: parent.left
+            anchors.right: gl.left
+            anchors.margins: 5
+            implicitWidth: parent.width / 2 - 10
             focus: true
             TableViewColumn {
                 role: "id"
@@ -50,12 +55,14 @@ Window {
                 width: tbClients.width * 0.8
             }
             model: clients
-            onCurrentRowChanged: selectClient(currentRow);
+            onCurrentRowChanged: ClientEdit.selectClient(currentRow);
         }
 
         GridLayout{
+            id:gl
             anchors.margins: 5
             anchors.top: parent.top
+            anchors.right: parent.right
             columns: 2
             rows: 4
 
@@ -90,16 +97,13 @@ Window {
                 Layout.fillWidth: true
             }
             Button{
-                id: bAdd
+                id: bSave
                 Layout.fillWidth: true
                 text:"Сохранить (Ctrl+S)"
                 enabled: false
                 Keys.onReturnPressed: clicked()
                 Keys.onSpacePressed: clicked()
-                onClicked: {
-//                    addClient({lastName:tfLastName.text, name:tfName.text, telephone:tfTelephone.text})
-//                    close();
-                }
+                onClicked: ClientEdit.saveClient(tbClients.currentRow)
             }
             Button{
                 id: bRemove
@@ -108,44 +112,26 @@ Window {
                 text:"Удалить (Delete)"
                 Keys.onReturnPressed: clicked()
                 Keys.onSpacePressed: clicked()
-                onClicked: close()
+                onClicked: messageQuestion.open()
             }
         }
     }
 
-    onVisibleChanged: restart()
+    MessageDialog {
+        id: messageQuestion
+        standardButtons :  StandardButton.Cancel | StandardButton.Yes
+        icon : StandardIcon.Question
+        title: "Вопрос"
+        text: "Удалить выбранного абонента?"
+        onYes: ClientEdit.removeClient(tbClients.currentRow)
 
-    function restart(){
+    }
+
+    onVisibleChanged:{
         if(visible){
-            setX(Screen.width / 2 - width / 2);
-            setY(Screen.height / 2 - height / 2);
-
-            if(clients && clients.length){
-                tbClients.forceActiveFocus();
-                tbClients.selection.select(0);
-                tbClients.currentRow = 0;
-            }
-
-            selectClient(tbClients.currentRow);
+            width  = 600;
+            height = 400;
+            ClientEdit.restart(Screen, height, width);
         }
-    }
-
-    function selectClient(index){
-        if(index < 0){
-            tfLastName.text  = "";
-            tfName.text      = "";
-            tfTelephone.text = "";
-            bAdd.enabled    = false;
-            bRemove.enabled = false;
-            return;
-        }
-
-        var client = clients[index];
-        tfLastName.text  = client.lastName;
-        tfName.text      = client.name;
-        tfTelephone.text = client.telephone;
-
-        bAdd.enabled    = true;
-        bRemove.enabled = true;
     }
 }
