@@ -6,6 +6,7 @@ import QtQml.Models 2.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import wifi.tplink 1.0
+import io 1.0
 
 import "main.js" as Main
 
@@ -23,13 +24,29 @@ ApplicationWindow {
     property int    tTotal: 0
     property int   tOnline: 0
 
+    property var clients: []
+    property var clientAdd: null
+    property var clientEdit: null
+
     property var model1F: ListModel {}
     property var model2F: ListModel {}
     property var model3F: ListModel {}
     property var modelOF: ListModel {}
 
-    menuBar: MenuBar {
-        Menu {
+    Action{
+        shortcut: "Ctrl+F"
+        enabled: !isScan
+        onTriggered: Main.buttonClick()
+    }
+
+    Action{
+        shortcut: "Ctrl+Z"
+        enabled: isScan
+        onTriggered: Main.buttonClick()
+    }
+
+    menuBar: MenuBar {        
+        Menu {            
             title: "Программа"
             MenuItem {
                 text: "Выход"
@@ -39,11 +56,21 @@ ApplicationWindow {
         }
 
         Menu {
-            title: "Пользователи"
-            MenuItem { text: "Добавить" }
-            MenuItem { text: "Редактировать" }
+            title: "Пользователи"            
+            MenuItem {
+                text: "Добавить"
+                shortcut: "Ctrl+A"
+                onTriggered: Main.menuClientAdd()
+            }
+            MenuItem {
+                text: "Редактировать"
+                shortcut: "Ctrl+E"
+                onTriggered: Main.menuClientEdit()
+            }
         }
     }
+
+    IO{ id: file }
 
     ColumnLayout {
         anchors.fill: parent
@@ -175,8 +202,6 @@ ApplicationWindow {
                     }
                     model: model1F
                 }
-
-
             }
             GroupBox {
                 id : gb2F
@@ -317,6 +342,11 @@ ApplicationWindow {
     onClosing: {
         close.accepted = false;
         Main.exit();
+    }
+
+    Component.onCompleted: {
+        setX(Screen.width / 2 - width / 2);
+        setY(Screen.height / 2 - height / 2);
     }
 
     MessageDialog {

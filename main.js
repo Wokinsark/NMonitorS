@@ -1,6 +1,6 @@
-var BUTTON_TEXT_START  = "НАЧАТЬ СБОР ИНФОРМАЦИИ"
+var BUTTON_TEXT_START  = "НАЧАТЬ СБОР ИНФОРМАЦИИ ( Ctrl + F )"
 var BUTTON_TEXT_WAIT   = "ОБРАБОТКА ИНФОРМАЦИИ"
-var BUTTON_TEXT_STOP   = "ОСТАНОВИТЬ СБОР ИНФОРМАЦИИ"
+var BUTTON_TEXT_STOP   = "ОСТАНОВИТЬ СБОР ИНФОРМАЦИИ ( Ctrl + Z )"
 var BUTTON_COLOR_START = "green"
 var BUTTON_COLOR_WAIT  = "magenta"
 var BUTTON_COLOR_STOP  = "red"
@@ -11,6 +11,43 @@ function exit() {
         return;
     }
     Qt.quit();
+}
+
+function menuClientAdd(){
+    if(clientAdd){
+        clientAdd.show();
+    } else {
+        clientAdd = Qt.createComponent("ClientAdd.qml").createObject(this);
+        clientAdd.addClient.connect(onClientAdd);
+    }
+}
+
+function menuClientEdit(){
+    if(!clientEdit){
+        clientEdit = Qt.createComponent("ClientEdit.qml").createObject(this);
+    }
+
+    console.log("@@@", JSON.stringify(clients));
+    clientEdit.clients = clients;
+    clientEdit.show();
+}
+
+function onClientAdd(client){
+    client.id = getClientId();
+    clients.push(client);
+    tTotal = clients.length;
+}
+
+function getClientId(){
+    var next = 1;
+    for(var i in clients){
+        var client = clients[i];
+        if(+client.id !== next){
+            return next;
+        }
+        next++;
+    }
+    return next;
 }
 
 function buttonClick(){

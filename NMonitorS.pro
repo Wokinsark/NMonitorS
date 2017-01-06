@@ -4,7 +4,8 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    wifihosts.cpp
+    wifihosts.cpp \
+    io.cpp
 
 RESOURCES += qml.qrc
 
@@ -19,4 +20,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES +=
 
 HEADERS += \
-    wifihosts.h
+    wifihosts.h \
+    io.h
