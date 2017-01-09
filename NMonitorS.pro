@@ -22,3 +22,5 @@ DISTFILES +=
 HEADERS += \
     wifihosts.h \
     io.h
+
+RC_FILE = ico.rc

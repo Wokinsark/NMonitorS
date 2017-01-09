@@ -25,12 +25,12 @@ ApplicationWindow {
 
     property var clients: []
     property var clientAdd: null
-    property var clientEdit: null
+    property var clientEdit: null    
+    property var deviceEdit: null
 
     property var model1F: ListModel {}
     property var model2F: ListModel {}
     property var model3F: ListModel {}
-    property var modelOF: ListModel {}
 
     Action{
         shortcut: "Ctrl+F"
@@ -70,6 +70,15 @@ ApplicationWindow {
                 text: "Редактировать"
                 shortcut: "Ctrl+E"
                 onTriggered: Main.menuClientEdit()
+            }
+        }
+
+        Menu {
+            title: "Устройства"
+            MenuItem {
+                text: "Редактировать"
+                shortcut: "Alt+E"
+                onTriggered: Main.menuDeviceEdit()
             }
         }
     }
@@ -181,11 +190,9 @@ ApplicationWindow {
                 title: "1 ЭТАЖ"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                implicitWidth: gl.width / 2 - 10
                 TableView{
                     id: table1F
                     anchors.fill: parent
-                    implicitWidth: parent.width
                     TableViewColumn {
                         role: "number"
                         title: "№"
@@ -194,16 +201,9 @@ ApplicationWindow {
                         width: table1F.width * 0.1
                     }
                     TableViewColumn {
-                        role: "mac"
-                        title: "MAC"
-                        resizable: false
-                        movable: false
-                        width: table1F.width * 0.5
-                    }
-                    TableViewColumn {
                         role: "name"
-                        title: "Фамилия Имя"
-                        width: table1F.width * 0.7
+                        title: "Абонент"
+                        width: table1F.width * 0.85
                     }
                     model: model1F
                 }
@@ -213,30 +213,21 @@ ApplicationWindow {
                 title: "2 ЭТАЖ"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                implicitWidth: gl.width / 2 - 10
 
                 TableView{
                     id: table2F
                     anchors.fill: parent
-                    implicitWidth: parent.width
                     TableViewColumn {
                         role: "number"
                         title: "№"
                         resizable: false
                         movable: false
                         width: table1F.width * 0.1
-                    }
-                    TableViewColumn {
-                        role: "mac"
-                        title: "MAC"
-                        resizable: false
-                        movable: false
-                        width: table1F.width * 0.5
-                    }
+                    }                   
                     TableViewColumn {
                         role: "name"
-                        title: "Фамилия Имя"
-                        width: table1F.width * 0.7
+                        title: "Абонент"
+                        width: table1F.width * 0.85
                     }
                     model: model2F
                 }
@@ -247,12 +238,10 @@ ApplicationWindow {
 
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                implicitWidth: gl.width / 2 - 10
 
                 TableView{
                     id: table3F
                     anchors.fill: parent
-                    implicitWidth: parent.width
                     TableViewColumn {
                         role: "number"
                         title: "№"
@@ -261,54 +250,13 @@ ApplicationWindow {
                         width: table1F.width * 0.1
                     }
                     TableViewColumn {
-                        role: "mac"
-                        title: "MAC"
-                        resizable: false
-                        movable: false
-                        width: table1F.width * 0.5
-                    }
-                    TableViewColumn {
                         role: "name"
-                        title: "Фамилия Имя"
-                        width: table1F.width * 0.7
+                        title: "Абонент"
+                        width: table1F.width * 0.85
                     }
                     model: model3F
                 }
-            }
-            GroupBox {
-                id : gbOF
-                title: "ТРЕБУЮЩИЕ ВНИМАНИЕ"
-
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                implicitWidth: gl.width / 2 - 10
-
-                TableView{
-                    id: tableOF
-                    anchors.fill: parent
-                    implicitWidth: parent.width
-                    TableViewColumn {
-                        role: "number"
-                        title: "№"
-                        resizable: false
-                        movable: false
-                        width: table1F.width * 0.1
-                    }
-                    TableViewColumn {
-                        role: "mac"
-                        title: "MAC"
-                        resizable: false
-                        movable: false
-                        width: table1F.width * 0.5
-                    }
-                    TableViewColumn {
-                        role: "name"
-                        title: "Фамилия Имя"
-                        width: table1F.width * 0.7
-                    }
-                    model: modelOF
-                }
-            }
+            }            
         }
     }
 
@@ -360,6 +308,6 @@ ApplicationWindow {
         standardButtons : StandardButton.Ok
         icon : StandardIcon.Information
         title: "Информация"
-        text: "Просто информация"
+        text: "Важная информация"
     }
 }

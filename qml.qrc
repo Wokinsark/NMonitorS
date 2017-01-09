@@ -6,5 +6,7 @@
         <file>ClientEdit.qml</file>
         <file>clientedit.js</file>
         <file>DeviceEdit.qml</file>
+        <file>icon.ico</file>
+        <file>DeviceAdd.qml</file>
     </qresource>
 </RCC>

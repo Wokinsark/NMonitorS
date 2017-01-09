@@ -31,7 +31,11 @@ function completed(Screen, height, width){
 
     var data = file.clientsRead();
     clients = data ? JSON.parse(data) : [];
-    tTotal = clients.length;
+    updateTotal();
+}
+
+function updateTotal(){
+    tTotal = getTotal();
 }
 
 function menuClientAdd(){
@@ -52,22 +56,18 @@ function menuClientEdit(){
     clientEdit.show();
 }
 
-function onClientAdd(client){
-    client.id = getClientId();
-    clients.push(client);
-    tTotal = clients.length;
+function menuDeviceEdit(){
+    if(!deviceEdit){
+        deviceEdit = Qt.createComponent("DeviceEdit.qml").createObject(this);
+    }
+
+    deviceEdit.clients = clients;
+    deviceEdit.show();
 }
 
-function getClientId(){
-    var next = 1;
-    for(var i in clients){
-        var client = clients[i];
-        if(+client.id !== next){
-            return next;
-        }
-        next++;
-    }
-    return next;
+function onClientAdd(client){    
+    clients.push(client);
+    updateTotal();
 }
 
 function buttonClick(){
@@ -78,7 +78,6 @@ function buttonClick(){
         model1F.clear();
         model2F.clear();
         model3F.clear();
-        modelOF.clear();
 
         tOnline = 0;
     } else {
@@ -100,18 +99,17 @@ function timerTriggered(){
     model1F.clear();
     model2F.clear();
     model3F.clear();
-    modelOF.clear();
 
     for(var index1F in mac1F){
-        model1F.append({number:(+index1F + 1), mac:mac1F[index1F], name:""});
+        model1F.append({number:(+index1F + 1), name:getName(mac1F[index1F])});
     }
 
     for(var index2F in mac2F){
-        model2F.append({number:(+index2F + 1), mac:mac2F[index2F], name:""});
+        model2F.append({number:(+index2F + 1), name:getName(mac2F[index2F])});
     }
 
     for(var index3F in mac3F){
-        model3F.append({number:(+index3F + 1), mac:mac3F[index3F], name:""});
+        model3F.append({number:(+index3F + 1), name:getName(mac3F[index3F])});
     }
 
     tOnline = mac1F.length + mac2F.length + mac3F.length;
@@ -119,4 +117,33 @@ function timerTriggered(){
     bText    = BUTTON_TEXT_STOP;
     bColor   = BUTTON_COLOR_STOP;
     bEnabled = true;
+}
+
+function getName(mac){
+    for(var i in clients){
+        var client  = clients[i];
+        var devices = client.devices;
+        if(!devices){
+            continue;
+        }
+        for(var j in devices){
+            if(mac.trim() === devices[j].mac.trim()){
+                return ("%1 %2").arg(client.lastName).arg(client.name);
+            }
+        }
+    }
+    return mac;
+}
+
+function getTotal(){
+    var total = 0;
+    for(var i in clients){
+        var client  = clients[i];
+        var devices = client.devices;
+        if(!devices){
+            continue;
+        }
+        total += devices.length;
+    }
+    return total;
 }

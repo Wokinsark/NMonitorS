@@ -43,16 +43,8 @@ Window {
             implicitWidth: parent.width / 2 - 10
             focus: true
             TableViewColumn {
-                role: "id"
-                title: "№"
-                resizable: false
-                movable: false
-                width: tbClients.width * 0.1
-            }
-            TableViewColumn {
                 role: "lastName"
-                title: "Фамилия"
-                width: tbClients.width * 0.8
+                title: "Фамилия"               
             }
             model: clients
             onCurrentRowChanged: ClientEdit.selectClient(currentRow);
@@ -124,7 +116,6 @@ Window {
         title: "Вопрос"
         text: "Удалить выбранного абонента?"
         onYes: ClientEdit.removeClient(tbClients.currentRow)
-
     }
 
     onVisibleChanged:{

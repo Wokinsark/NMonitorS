@@ -8,8 +8,6 @@ Window {
     visible: true
     title: "Добавить абонента"
     modality : Qt.ApplicationModal
-    width: 300
-    height: 130
 
     signal addClient(var client)
 

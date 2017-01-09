@@ -1,19 +1,19 @@
 function selectClient(index){
     if(index < 0){
-        tfLastName.text  = "";
-        tfName.text      = "";
+        tfLastName .text = "";
+        tfName     .text = "";
         tfTelephone.text = "";
-        bSave.enabled    = false;
-        bRemove.enabled = false;
+        bSave   .enabled = false;
+        bRemove .enabled = false;
         return;
     }
 
     var client = clients[index];
-    tfLastName.text  = client.lastName;
-    tfName.text      = client.name;
+    tfLastName .text = client.lastName;
+    tfName     .text = client.name;
     tfTelephone.text = client.telephone;
 
-    bSave.enabled    = true;
+    bSave  .enabled = true;
     bRemove.enabled = true;
 }
 
@@ -25,6 +25,8 @@ function saveClient(index){
     clients[index].lastName  = tfLastName.text;
     clients[index].name      = tfName.text;
     clients[index].telephone = tfTelephone.text;
+
+    close();
 }
 
 function removeClient(index){
@@ -32,11 +34,7 @@ function removeClient(index){
         return;
     }
 
-    if(index === 0){
-        clients.splice(0, 1);
-    } else {
-        clients.splice(1, index);
-    }
+    clients.splice(index, 1);
 
     main.tTotal = clients.length;
     close();
@@ -48,6 +46,7 @@ function restart(Screen, height, width){
 
     if(clients && clients.length){
         tbClients.forceActiveFocus();
+        tbClients.selection.clear();
         tbClients.selection.select(0);
         tbClients.currentRow = 0;
     }
