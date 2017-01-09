@@ -1,9 +1,18 @@
-var BUTTON_TEXT_START  = "НАЧАТЬ СБОР ИНФОРМАЦИИ ( Ctrl + F )"
-var BUTTON_TEXT_WAIT   = "ОБРАБОТКА ИНФОРМАЦИИ"
-var BUTTON_TEXT_STOP   = "ОСТАНОВИТЬ СБОР ИНФОРМАЦИИ ( Ctrl + Z )"
-var BUTTON_COLOR_START = "green"
-var BUTTON_COLOR_WAIT  = "magenta"
-var BUTTON_COLOR_STOP  = "red"
+var BUTTON_TEXT_START  = "НАЧАТЬ ( Ctrl + F )"
+var BUTTON_TEXT_WAIT   = "ОЖИДАЙТЕ"
+var BUTTON_TEXT_STOP   = "ОСТАНОВИТЬ ( Ctrl + Z )"
+
+var BUTTON_COLOR_START = "red"
+var BUTTON_COLOR_WAIT  = "darkBlue"
+var BUTTON_COLOR_STOP  = "green"
+
+var TEXT_COLOR_CONNECTION   = "darkGreen"
+var TEXT_COLOR_NOCONNECTION = "red"
+var TEXT_COLOR_NO_INFO      = "darkBlue"
+
+var TEXT_TEXT_CONNECTION   = "ЕСТЬ СВЯЗЬ"
+var TEXT_TEXT_NOCONNECTION = "НЕТ СВЯЗИ"
+var TEXT_TEXT_NO_INFO      = "НЕТ ИНФОРМАЦИИ"
 
 function exit(close) {
     if(isScan){
@@ -75,6 +84,15 @@ function buttonClick(){
         bText  = BUTTON_TEXT_START;
         bColor = BUTTON_COLOR_START;
 
+        tIndication1F.text  = TEXT_TEXT_NO_INFO;
+        tIndication1F.color = TEXT_COLOR_NO_INFO;
+
+        tIndication2F.text  = TEXT_TEXT_NO_INFO;
+        tIndication2F.color = TEXT_COLOR_NO_INFO;
+
+        tIndication3F.text  = TEXT_TEXT_NO_INFO;
+        tIndication3F.color = TEXT_COLOR_NO_INFO;
+
         model1F.clear();
         model2F.clear();
         model3F.clear();
@@ -87,36 +105,72 @@ function buttonClick(){
     isScan = !isScan;
 }
 
+function onScanResult1F(ping, hosts){
+    if(ping){
+        tIndication1F.text  = TEXT_TEXT_CONNECTION;
+        tIndication1F.color = TEXT_COLOR_CONNECTION;
+
+        for(var index1F in hosts){
+            model1F.append({number:(+index1F + 1), name:getName(hosts[index1F])});
+        }
+    } else {
+        tIndication1F.text  = TEXT_TEXT_NOCONNECTION;
+        tIndication1F.color = TEXT_COLOR_NOCONNECTION;
+    }
+
+    hosts2F.start();
+}
+
+function onScanResult2F(ping, hosts){
+    if(ping){
+        tIndication2F.text  = TEXT_TEXT_CONNECTION;
+        tIndication2F.color = TEXT_COLOR_CONNECTION;
+
+        for(var index2F in hosts){
+            model2F.append({number:(+index2F + 1), name:getName(hosts[index2F])});
+        }
+    } else {
+        tIndication2F.text  = TEXT_TEXT_NOCONNECTION;
+        tIndication2F.color = TEXT_COLOR_NOCONNECTION;
+    }
+
+    hosts3F.start();
+}
+
+function onScanResult3F(ping, hosts){
+    if(ping){
+        tIndication3F.text  = TEXT_TEXT_CONNECTION;
+        tIndication3F.color = TEXT_COLOR_CONNECTION;
+
+        for(var index3F in hosts){
+            model3F.append({number:(+index3F + 1), name:getName(hosts[index3F])});
+        }
+    } else {
+        tIndication3F.text  = TEXT_TEXT_NOCONNECTION;
+        tIndication3F.color = TEXT_COLOR_NOCONNECTION;
+    }
+
+    tOnline = table1F.rowCount + table2F.rowCount + hosts.length;
+
+    progress.value = 0;
+    timer.restart();
+
+    bText    = BUTTON_TEXT_STOP;
+    bColor   = BUTTON_COLOR_STOP;
+    bEnabled = true;
+}
+
 function timerTriggered(){
     bEnabled = false;
     bText    = BUTTON_TEXT_WAIT;
     bColor   = BUTTON_COLOR_WAIT;
 
-    var mac1F = hosts1F.getAllMAC();
-    var mac2F = hosts2F.getAllMAC();
-    var mac3F = hosts3F.getAllMAC();
-
     model1F.clear();
     model2F.clear();
     model3F.clear();
 
-    for(var index1F in mac1F){
-        model1F.append({number:(+index1F + 1), name:getName(mac1F[index1F])});
-    }
-
-    for(var index2F in mac2F){
-        model2F.append({number:(+index2F + 1), name:getName(mac2F[index2F])});
-    }
-
-    for(var index3F in mac3F){
-        model3F.append({number:(+index3F + 1), name:getName(mac3F[index3F])});
-    }
-
-    tOnline = mac1F.length + mac2F.length + mac3F.length;
-
-    bText    = BUTTON_TEXT_STOP;
-    bColor   = BUTTON_COLOR_STOP;
-    bEnabled = true;
+//    hosts1F.startScan();
+    hosts1F.start();
 }
 
 function getName(mac){

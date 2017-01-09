@@ -25,7 +25,7 @@ ApplicationWindow {
 
     property var clients: []
     property var clientAdd: null
-    property var clientEdit: null    
+    property var clientEdit: null
     property var deviceEdit: null
 
     property var model1F: ListModel {}
@@ -34,18 +34,18 @@ ApplicationWindow {
 
     Action{
         shortcut: "Ctrl+F"
-        enabled: !isScan
+        enabled: bStart.enabled && !isScan
         onTriggered: Main.buttonClick()
     }
 
     Action{
         shortcut: "Ctrl+Z"
-        enabled: isScan
+        enabled: bStart.enabled && isScan
         onTriggered: Main.buttonClick()
     }
 
-    menuBar: MenuBar {        
-        Menu {            
+    menuBar: MenuBar {
+        Menu {
             title: "Программа"
             MenuItem {
                 text: "Сохранить всё"
@@ -60,7 +60,7 @@ ApplicationWindow {
         }
 
         Menu {
-            title: "Пользователи"            
+            title: "Пользователи"
             MenuItem {
                 text: "Добавить"
                 shortcut: "Ctrl+A"
@@ -85,78 +85,47 @@ ApplicationWindow {
 
     IO{ id: file }
 
-    ColumnLayout {
+    GridLayout{
+        id: gl
         anchors.fill: parent
-        RowLayout{
-            id: rl
-            anchors.margins: 5
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            GroupBox{
-                id : gbTotal
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: gbProgress.left                
-                anchors.bottom: parent.bottom
-                Layout.fillWidth: true
-                GridLayout{
-                    anchors.fill: parent
-                    columns: 2
-                    rows: 2
-                    Text {
-                        color: "blue"
-                        text: "Всего"
-                    }
-                    Text {
-                        text: tTotal
-                    }
-                    Text {
-                        color: "blue"
-                        text: "В сети"
-                    }
-                    Text {
-                        text: tOnline
-                    }
+        columns: 2
+        rows: 2
+        anchors.margins: 10
+        GroupBox {
+            id : gb1F
+            title: "1 ЭТАЖ"
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            TableView{
+                id: table1F
+                anchors.fill: parent
+                TableViewColumn {
+                    role: "number"
+                    title: "№"
+                    resizable: false
+                    movable: false
+                    width: table1F.width * 0.1
                 }
-            }
-            GroupBox{
-                id: gbProgress
-                anchors.top: parent.top
-                anchors.left: gbTotal.right
-                anchors.right: gbStart.left
-                anchors.bottom: parent.bottom
-                Layout.fillWidth: true
-                ProgressBar{
-                    id: progress
-                    minimumValue: 0
-                    maximumValue: 5000
-                    value: 0
-                    anchors.horizontalCenter : parent.horizontalCenter
-                    anchors.verticalCenter : parent.verticalCenter
-                    width: parent.width
-                    Layout.fillWidth: true
-
-                    Timer{
-                        interval: 100
-                        repeat: true
-                        triggeredOnStart : true
-                        running: isScan
-                        onTriggered: progress.value = progress.value === 5000 ? 0 : progress.value += 100
-                        onRunningChanged: progress.value = 0
-                    }
+                TableViewColumn {
+                    role: "name"
+                    title: "Абонент"
+                    width: table1F.width * 0.85
                 }
+                model: model1F
             }
-            GroupBox{
-                id : gbStart
-                anchors.top: parent.top
-                anchors.left: gbProgress.right
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                Layout.fillWidth: true
+        }
 
+        Item{
+            id : gbStart
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            ColumnLayout{
+                anchors.fill: parent
+                anchors.margins: 5
                 Button{
-                    anchors.fill: parent
+                    id: bStart
+                    implicitHeight: 50
+                    Layout.fillWidth: true
                     enabled: bEnabled
                     style: ButtonStyle {
                         background: Rectangle {
@@ -173,90 +142,131 @@ ApplicationWindow {
                     }
                     onClicked: Main.buttonClick()
                 }
+
+                ProgressBar{
+                    id: progress
+                    minimumValue: 0
+                    maximumValue: 5000
+                    value: 0
+                    Layout.fillWidth: true
+
+                    Timer{
+                        interval: 100
+                        repeat: true
+                        triggeredOnStart : true
+                        running: isScan
+                        onTriggered: progress.value += 100
+                        onRunningChanged: progress.value = 0
+                    }
+                }
+
+                GridLayout{
+                    Layout.fillWidth: true
+                    columns: 2
+                    rows: 5
+                    Text {
+                        color: "darkBlue"
+                        Layout.fillWidth: true
+                        horizontalAlignment : Text.AlignRight
+                        text: "1 Этаж"
+                    }
+                    Text {
+                        id: tIndication1F
+                        color: Main.TEXT_COLOR_NO_INFO
+                        text: Main.TEXT_TEXT_NO_INFO
+                    }
+                    Text {
+                        color: "darkBlue"
+                        Layout.fillWidth: true
+                        horizontalAlignment : Text.AlignRight
+                        text: "2 Этаж"
+                    }
+                    Text {
+                        id: tIndication2F
+                        color: Main.TEXT_COLOR_NO_INFO
+                        text: Main.TEXT_TEXT_NO_INFO
+                    }
+                    Text {
+                        color: "darkBlue"
+                        Layout.fillWidth: true
+                        horizontalAlignment : Text.AlignRight
+                        text: "3 Этаж"
+                    }
+                    Text {
+                        id: tIndication3F
+                        color: Main.TEXT_COLOR_NO_INFO
+                        text: Main.TEXT_TEXT_NO_INFO
+                    }
+                    Text {
+                        color: "blue"
+                        Layout.fillWidth: true
+                        horizontalAlignment : Text.AlignRight
+                        text: "Абонентов всего"
+                    }
+                    Text {
+                        text: tTotal
+                    }
+                    Text {
+                        color: "blue"
+                        Layout.fillWidth: true
+                        horizontalAlignment : Text.AlignRight
+                        text: "Абонентов в сети"
+                    }
+                    Text {
+                        text: tOnline
+                    }                    
+                }
             }
         }
 
-        GridLayout{
-            id: gl
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: rl.bottom
-            anchors.bottom: parent.bottom            
-            columns: 2
-            rows: 2
+        GroupBox {
+            id : gb2F
+            title: "2 ЭТАЖ"
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
-            GroupBox {
-                id : gb1F
-                title: "1 ЭТАЖ"
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                TableView{
-                    id: table1F
-                    anchors.fill: parent
-                    TableViewColumn {
-                        role: "number"
-                        title: "№"
-                        resizable: false
-                        movable: false
-                        width: table1F.width * 0.1
-                    }
-                    TableViewColumn {
-                        role: "name"
-                        title: "Абонент"
-                        width: table1F.width * 0.85
-                    }
-                    model: model1F
+            TableView{
+                id: table2F                 
+                anchors.fill: parent
+                TableViewColumn {
+                    role: "number"
+                    title: "№"
+                    resizable: false
+                    movable: false
+                    width: table1F.width * 0.1
                 }
+                TableViewColumn {
+                    role: "name"
+                    title: "Абонент"
+                    width: table1F.width * 0.85
+                }
+                model: model2F
             }
-            GroupBox {
-                id : gb2F
-                title: "2 ЭТАЖ"
-                Layout.fillHeight: true
-                Layout.fillWidth: true
+        }
+        GroupBox {
+            id : gb3F
+            title: "3 ЭТАЖ"
 
-                TableView{
-                    id: table2F
-                    anchors.fill: parent
-                    TableViewColumn {
-                        role: "number"
-                        title: "№"
-                        resizable: false
-                        movable: false
-                        width: table1F.width * 0.1
-                    }                   
-                    TableViewColumn {
-                        role: "name"
-                        title: "Абонент"
-                        width: table1F.width * 0.85
-                    }
-                    model: model2F
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            TableView{
+                id: table3F
+                anchors.fill: parent
+                TableViewColumn {
+                    role: "number"
+                    title: "№"
+                    resizable: false
+                    movable: false
+                    width: table1F.width * 0.1
                 }
+                TableViewColumn {
+                    role: "name"
+                    title: "Абонент"
+                    width: table1F.width * 0.85
+                }
+                model: model3F
             }
-            GroupBox {
-                id : gb3F
-                title: "3 ЭТАЖ"
-
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-
-                TableView{
-                    id: table3F
-                    anchors.fill: parent
-                    TableViewColumn {
-                        role: "number"
-                        title: "№"
-                        resizable: false
-                        movable: false
-                        width: table1F.width * 0.1
-                    }
-                    TableViewColumn {
-                        role: "name"
-                        title: "Абонент"
-                        width: table1F.width * 0.85
-                    }
-                    model: model3F
-                }
-            }            
         }
     }
 
@@ -266,6 +276,7 @@ ApplicationWindow {
         port: 80
         login: "Wokinsark"
         password: "LvfVwy0DPoijGL"
+        onScanResult: Main.onScanResult1F(isPing, hostsMAC)
     }
 
     WifiHosts{
@@ -274,6 +285,7 @@ ApplicationWindow {
         port: 80
         login: "Wokinsark"
         password: "es8aIXnDAET2Od"
+        onScanResult: Main.onScanResult2F(isPing, hostsMAC)
     }
 
     WifiHosts{
@@ -282,12 +294,13 @@ ApplicationWindow {
         port: 81
         login: "Wokinsark"
         password: "tD1VWkgGJVHLlw"
+        onScanResult: Main.onScanResult3F(isPing, hostsMAC)
     }
 
     Timer{
+        id: timer
         interval: 5 * 1000
-        repeat: true
-        triggeredOnStart : true
+//        triggeredOnStart : true
         running: isScan
         onTriggered: Main.timerTriggered()
     }

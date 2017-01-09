@@ -2,7 +2,7 @@
 
 #include "wifihosts.h"
 
-WiFiHosts::WiFiHosts(QObject *parent) : QObject(parent), m_ip(""), m_port(0), m_login(""), m_pass("")
+WiFiHosts::WiFiHosts(QObject *parent) : QThread(parent), m_ip(""), m_port(0), m_login(""), m_pass("")
 {
 
 }
@@ -51,6 +51,16 @@ void WiFiHosts::setPassword(const QString &password)
     emit passwordChanged(password);
 }
 
+void WiFiHosts::run()
+{
+    bool isPing = ping();
+    if(isPing){
+        emit scanResult(true, getAllMAC());
+    } else {
+        emit scanResult(false, QStringList());
+    }
+}
+
 QStringList WiFiHosts::getAllMAC()
 {
     QString answer = getAnswer(m_ip, m_port, m_login, m_pass);
@@ -59,6 +69,16 @@ QStringList WiFiHosts::getAllMAC()
     }
 
     return getHosts(answer);
+}
+
+bool WiFiHosts::ping()
+{
+#if defined(WIN32)
+    QString parameter = "-n 1";
+#else
+    QString parameter = "-c 1";
+#endif
+    return !QProcess::execute("ping", QStringList() << parameter << m_ip);
 }
 
 QString WiFiHosts::getAnswer(const QString &ip, const int &port, const QString &login, const QString &pass)
